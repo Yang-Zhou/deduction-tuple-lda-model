@@ -1,0 +1,95 @@
+\documentclass{article}
+\usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}
+\usepackage{amssymb,amsthm,graphicx}
+\usepackage[fleqn]{amsmath}
+\usepackage{leftidx}
+\title{A New Joint Latent model for deducing semantic roles}
+\author{Yang Zhou}
+
+
+\newtheorem{throrem}{Theorem}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+
+\section{Related Work}
+
+\section{Model}
+\subsection{Plate representation}
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.5,bb=0 0 350 480]{easycontext.png}
+\caption{Plate graph}
+\label{Figure 1}
+\end{figure}
+
+
+$$\theta \sim Dirichlet(\alpha)$$
+$$\phi  \sim Dirichlet(\eta)$$
+$$\psi \sim Dirichlet(\xi)$$
+$$\sigma \sim Dirichlet(\mu)$$
+
+$$f_m\mid\theta^{(d_i)} \sim Multinomial(\theta^{(d_i)})$$
+$$c_w^{(t_w)}\mid t_w,f_m,\sigma^{(f_m)} \sim Multinomial(\sigma^{(f_m)}) $$
+$$s_w \mid c_w^{(t_w)},\phi^{(s_w)} \sim Multinomial(\phi^{(s_w)})$$
+
+$$ a_n\mid c_w \sim Uniform(c_w) $$
+$$ w_n \mid a_n, \psi^{(w_n)} \sim Multinomial(\psi^{(w_n)})$$
+
+
+\subsection{Generating process}
+Given $\alpha$, $\mu$, $\eta$, $\xi$:
+\begin{enumerate}
+  \item Sample word class distribution $\sigma_c \sim Dir(\mu)$
+  \item Sample semantic roles distribution $\phi_p \sim Dir(\eta)$
+  \item Sample context distribution $\psi_q \sim Dir(\xi)$
+  \item For each document d in D, sample its frame distribution $\theta_d \sim Dir(\alpha)$:
+  \begin{enumerate}
+  	\item For each frame f in d, sample $f_m \sim Multi(\theta_d)$:
+  	\begin{enumerate}
+  	 \item For each semantic roles $s_w$ in $f_m$: for each word type t $\in$ \{1,2,3\}
+  	 \item If a is null in this tuple, skip it.
+  	 \item Sample class $c_w^{(t)} \sim Multi(\sigma^{(f_m)})$
+  	 \item Sample semantic word $s_w^{(t)} \sim Multi(\phi^{(c_w^{(t)})})$
+  	 \end{enumerate}
+  	 \item For each context word w in d:
+  	 \begin{enumerate}
+  	 \item Sample a context class $a_n \sim Uni(c_w)$
+  	 \item Sample a word $w_n \sim Multi(\xi^{(a_n)})$
+  	 \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+
+\section{Deduction}
+
+\subsection{Likelihood}
+A document's likelihood:
+\begin{align}
+& \qquad P(d \mid \alpha, \mu, \eta, \xi, t) \\
+&= P(s^{(t)}, w \mid \alpha, \mu, \eta, \xi, t) \\
+&= \sum_c P(s^{(t)} \mid t, c, \eta)  P(w \mid c, \xi)  P(c \mid \alpha, \mu) \\
+&=  \int_{\sigma} P(\sigma \mid \mu) \int_{\phi} P(\phi \mid \eta)  \sum_c P(s^{(t)} \mid c, \phi, t) \\  
+&\qquad \times  \int_{\psi} P(\psi \mid \xi) \sum_a P(w \mid a, \psi) P(a\mid c)\int_{\theta} P(\theta \mid \alpha) \sum_f P(c \mid f, \sigma) P(f\mid\theta)d\theta  d\psi d\phi d\sigma  \nonumber
+\end{align}
+
+\noindent The corpus' likelihood:
+\begin{align}
+& \qquad P(D \mid \alpha, \mu, \eta, \xi, t) = \prod_d P(d \mid \alpha, \mu, \eta, \xi, t)
+\end{align}
+
+\subsection{Inference}
+\begin{align}
+& \qquad P(f \mid d, c, t, a) \\
+&\propto 
+\end{align}
+
+
+\section{Conclude}
+
+
+\end{document}

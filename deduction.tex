@@ -1,0 +1,597 @@
+\documentclass{article}
+\usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}
+\usepackage{amssymb,amsthm,graphicx}
+\usepackage[fleqn]{amsmath}
+\usepackage{leftidx}
+\title{A latent model for inducing frame semantic roles}
+\author{Yang Zhou}
+
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\maketitle
+
+%some sections and some figures and some equations
+\section{Introduction}
+
+%A general overview of the area you are surveying, preferably
+%math-free. Include citations, e.g. \cite{Blum92}.
+
+\section{Model Concepts}
+
+
+
+%\subsection{Graph}
+
+%\begin{figure}[htb]
+%\centering
+%\includegraphics[scale=0.5,bb=0 0 250 480]{easy.png}
+%\caption{Plate graph}
+%\label{Figure 1}
+%\end{figure}
+
+
+$$\theta	\sim Dirichlet(\alpha)$$
+$$\phi_s \sim Dirichlet(\beta)$$ 
+$$\phi_v \sim Dirichlet(\beta)$$
+$$\phi_o \sim Dirichlet(\beta)$$
+
+
+$$f_m \sim Multinomial(\theta^{(m)}$$
+$$s \mid f_m, \phi_s^{(f_m)} \sim Multinomial(f_m)$$
+$$v \mid f_m, \phi_v^{(f_m)} \sim Multinomial(f_m)$$
+$$o \mid f_m, \phi_o^{(f_m)} \sim Multinomial(f_m)$$
+
+\subsection{Generating process}
+
+
+\begin{enumerate}
+\item Sample frame distribution $\theta$ from $Dirichlet(\alpha)$
+\item Sample subject distribution $\phi_s$ from $Dirichlet(\beta)$
+\item Sample predicate distribution $\phi_v$ from $Dirichlet(\beta)$
+\item Sample object distribution $\phi_o$ from $Dirichlet(\beta)$ \newline
+
+ \textbf{Document-Frame}
+\item For each frame in d, sample $f_m \sim Multinomial(\theta_m)$: \newline
+
+\textbf{Frame-Roles}
+
+
+
+\item  For each semantic roles in $f_m$:
+\begin{enumerate}
+\item Sample $s_m \sim Multinomial(\phi_s^{(m)})$
+\item Sample $v_m \sim Multinomial(\phi_v^{(m)})$
+\item Sample $o_m \sim Multinomial(\phi_o^{(m)})$
+\end{enumerate}•
+
+\end{enumerate}•
+
+
+
+\section{Model Detail}
+A deduction of the model.
+\subsection{Likelihood}
+%A more in-depth discussion of previous work. We expect to %see more
+%citations, some equations
+The joint distribution of all known and hidden variables given the hyperparameters:
+
+\begin{equation}
+\begin{aligned}
+&\qquad P(\vec{s}_m, \vec{v}_m, \vec{o}_m, \vec{f}_m, \vec{\theta}_m, \Phi{^s},\Phi{^v}, \Phi{^o} \mid \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{i=1}^{N_m} 
+P(s_{m,n} \mid \vec{\phi_{f}}_{m,n}^s)
+P(v_{m,n} \mid \vec{\phi_{f}}_{m,n}^v)
+P(o_{m,n} \mid \vec{\phi_{f}}_{m,n}^o)
+P(f_{m,n} \mid \vec{\theta}_m)
+P(\vec{\theta}_m \mid \vec{\alpha})
+\\
+& \qquad\qquad\cdot
+P(\vec{\Phi}^s \mid \vec{\beta})
+P(\vec{\Phi}^v \mid \vec{\beta})
+P(\vec{\Phi}^o \mid \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\noindent Likelihood of a document:
+\begin{equation}
+\begin{aligned}
+&\qquad P(\vec{d}_m \mid \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= P(\vec{s}_m, \vec{v}_m, \vec{o}_m \mid \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \int P(\vec{s}_m, \vec{v}_m, \vec{o}_m \mid \vec{\theta}_m, \vec{\beta}) \cdot
+P(\vec{\theta}_m \mid \vec{\alpha}) d\vec{\theta}_m 
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \int \prod_{n=1}^{N_m}\sum_{f_{m,n}} P(s_{m,n}, v_{m,n}, o_{m,n} \mid f_{m,n}, \vec{\beta}) P(f_{m,n} \mid \vec{\theta}_m) \cdot P(\vec{\theta}_m \mid \vec{\alpha}) d\vec{\theta}_m
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \iiiint  
+P(\vec{\theta}_m \mid \vec{\alpha})
+P(\vec{\Phi}^s \mid \vec{\beta})
+P(\vec{\Phi}^v \mid \vec{\beta})
+P(\vec{\Phi}^o \mid \vec{\beta}) \\
+&\qquad\cdot  \prod_{i=1}^{N_m} 
+\sum_{f_{m,n}}
+P(s_{m,n} \mid \vec{\phi_{f}}_{m,n}^s)
+P(v_{m,n} \mid \vec{\phi_{f}}_{m,n}^v)
+P(o_{m,n} \mid \vec{\phi_{f}}_{m,n}^o) 
+\cdot 
+P(f_{m,n} \mid \vec{\theta}_m)
+d\vec{\Phi}^s
+d\vec{\Phi}^v
+d\vec{\Phi}^o
+d\vec{\theta}_m 
+\end{aligned}
+\end{equation}
+
+
+
+\noindent Likelihood of a corpus:
+\begin{equation}
+\begin{aligned}
+&\qquad P(W \mid \vec{\alpha}, \vec{\beta}) 
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{m=1}^{M} P(\vec{s}_m, \vec{v}_m, \vec{o}_m, \mid \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{m=1}^{M} \iiiint  
+P(\vec{\theta}_m \mid \vec{\alpha})
+P(\vec{\Phi}^s \mid \vec{\beta})
+P(\vec{\Phi}^v \mid \vec{\beta})
+P(\vec{\Phi}^o \mid \vec{\beta}) \\
+&\qquad\cdot  \prod_{i=1}^{N_m} 
+\sum_{f_{m,n}}
+P(s_{m,n} \mid \vec{\phi_{f}}_{m,n}^s)
+P(v_{m,n} \mid \vec{\phi_{f}}_{m,n}^v)
+P(o_{m,n} \mid \vec{\phi_{f}}_{m,n}^o) 
+\cdot 
+P(f_{m,n} \mid \vec{\theta}_m)
+d\vec{\Phi}^s
+d\vec{\Phi}^v
+d\vec{\Phi}^o
+d\vec{\theta}_m 
+\end{aligned}
+\end{equation}
+
+
+
+
+\subsection{Inference}
+The target of inference is the distribution:
+\begin{equation}
+\begin{aligned}
+& \qquad P(\vec{f} \mid \vec{s}, \vec{v}, \vec{o})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned} \label{cant_compute}
+&= \frac{P( \vec{s}, \vec{v}, \vec{o} \mid \vec{f} )} {\sum_{f_m} P(\vec{s}, \vec{v}, \vec{o}, \vec{f})}
+\end{aligned}
+\end{equation}
+
+\noindent Because computing (\ref{cant_compute}) directly costs high.  
+
+ \textbf{Joint Distribution}
+\begin{equation}
+\begin{aligned}
+& \qquad P(\vec{s}, \vec{v}, \vec{o}, \vec{f} \mid \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= P(\vec{s}, \vec{v}, \vec{o} \mid \vec{f}, \vec{\beta}) P(\vec{f} \mid \vec{\alpha})
+\end{aligned}
+\end{equation}
+
+
+\noindent Deducing $P(\vec{s}, \vec{v}, \vec{o} \mid \vec{f}, \vec{\beta})$ and $P(\vec{f} \mid \vec{\alpha})$ separately
+
+\begin{equation}
+\begin{aligned}
+& \qquad P(\vec{s}, \vec{v}, \vec{o} \mid \vec{f}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \iiint P(\vec{s}, \vec{v}, \vec{o} \mid \vec{f}, \Phi^s, \Phi^v, \Phi^o) 
+\cdot P(\Phi^s, \Phi^v, \Phi^o \mid \vec{\beta}) d\Phi^s d\Phi^v d\Phi^o
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned} \label{symmetry}
+&= \int P(\vec{s} \mid \vec{f}, \Phi^s) P(\Phi^s \mid \vec{\beta}) d\Phi^s
+\int P(\vec{v} \mid \vec{f}, \Phi^v) P(\Phi^v \mid \vec{\beta}) d\Phi^v
+\int P(\vec{o} \mid \vec{f}, \Phi^o) P(\Phi^o \mid \vec{\beta}) d\Phi^o
+\end{aligned}
+\end{equation}
+
+\noindent The three part of (\ref{symmetry}) are the same, so take $\int P(\vec{s} \mid \vec{f}, \Phi^s) P(\Phi^s \mid \vec{\beta}) d\Phi^s$ as an example:
+
+\begin{equation}
+\begin{aligned} 
+& \qquad \int P(\vec{s} \mid \vec{f}, \Phi^s) P(\Phi^s \mid \vec{\beta}) d\Phi^s
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned} 
+= \int \prod_{k=1}^{K}{ \prod_{t=1}^{V_s} { 
+ \phi_{k,t}^{n_{s,k}^{(t)}}  
+ \prod_{k=1}^{K}P(\vec{\phi}_k^s \mid \vec{\beta})d\vec{\phi}_k^s}}
+\end{aligned}
+\end{equation}
+
+The $n_{s,k}^{(t)}$ means the number of times a \underline{s}ubject occurred under a  frame k.
+
+
+\begin{equation}
+\begin{aligned}
+&= \int \prod_{k=1}^{K}{ \prod_{t=1}^{V_s} { \phi_{k,t}^{n_{s,k}^{(t)}} 
+\prod_{k=1}^{K} \left( \frac{\varGamma(\sum_{t=1}^{V_s} \beta_t)}{\prod_{t=1}^{V_s}\varGamma(\beta_t)} \prod_{t=1}^{V_s}\phi_{k,t}^{(s)\beta_t -1}  \right)
+d\phi_k^s}}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \left( \frac{\varGamma(\sum_{t=1}^{V_s} \beta_t)}{\prod_{t=1}^{V_s}\varGamma(\beta_t)} \right)^K 
+\prod_{k=1}^{K}\int \prod_{t=1}^{V_s}\phi_{k,t}^{(s)\beta_t + n_{s,k}^{(t)} -1} d\phi_k^s
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \left( \frac{\varGamma(\sum_{t=1}^{V_s} \beta_t)}{\prod_{t=1}^{V_s}\varGamma(\beta_t)} \right)^K 
+\prod_{k=1}^{K}
+\frac{\prod_{t=1}^{V_s}\varGamma(\beta_t+n_{s,k}^{(t)})}{\varGamma(\sum_{t=1}^{V_s} (\beta_t+n_{s,k}^{(t)}))} 
+\end{aligned}
+\end{equation}
+
+% % % 
+
+So, $\int P(\vec{v} \mid \vec{f}, \Phi^v) P(\Phi^v \mid \vec{\beta}) d\Phi^v$ and $\int P(\vec{o} \mid \vec{f}, \Phi^o) P(\Phi^o \mid \vec{\beta}) d\Phi^o$ can be deduced identically:
+
+\begin{equation}
+\begin{aligned}
+&\qquad \int P(\vec{v} \mid \vec{f}, \Phi^v) P(\Phi^v \mid \vec{\beta}) d\Phi^v
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \left( \frac{\varGamma(\sum_{t=1}^{V_v} \beta_t)}{\prod_{t=1}^{V_v}\varGamma(\beta_t)} \right)^K 
+\prod_{k=1}^{K}
+\frac{\prod_{t=1}^{V_v}\varGamma(\beta_t+n_{v,k}^{(t)})}{\varGamma(\sum_{t=1}^{V_v} (\beta_t+n_{v,k}^{(t)}))} 
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&\qquad \int P(\vec{o} \mid \vec{f}, \Phi^o) P(\Phi^o \mid \vec{\beta}) d\Phi^o
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \left( \frac{\varGamma(\sum_{t=1}^{V_o} \beta_t)}{\prod_{t=1}^{V_o}\varGamma(\beta_t)} \right)^K 
+\prod_{k=1}^{K}
+\frac{\prod_{t=1}^{V_o}\varGamma(\beta_t+n_{o,k}^{(t)})}{\varGamma(\sum_{t=1}^{V_o}(\beta_t+n_{o,k}^{(t)}))} 
+\end{aligned}
+\end{equation}
+
+% % %
+
+And 
+
+\begin{equation}
+\begin{aligned}
+& \qquad P( \vec{f} \mid \vec{\alpha})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \int P(\vec{f} \mid \vec{\theta}) P(\vec{\theta}\mid\vec{\alpha}) d\vec{\theta}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \int \prod_{m=1}^{M} {\prod_{k=1}^{K}} \theta_{m,k}^{n_m^{(k)}} \prod_{m=1}^{M} P(\vec{\theta}_k \mid \vec{\alpha}) d\vec{\theta}_k
+\end{aligned}
+\end{equation}
+
+
+
+
+\begin{equation}
+\begin{aligned}
+&= \int \prod_{m=1}^{M} {\prod_{k=1}^{K}} \theta_{m,k}^{n_m^{(k)}} \prod_{m=1}^{M} \left( 
+\frac{\varGamma(\sum_{t=1}^{K} \alpha_k)}{\prod_{t=1}^{K}\varGamma(\alpha_k)}  \prod_{k=1}^{K} \theta_{m,k}^{\alpha_k -1} 
+\right) d \vec{\theta}_k
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&= \left( 
+\frac{\varGamma(\sum_{t=1}^{K} \alpha_k)}{\prod_{t=1}^{K} \varGamma(\alpha_k)} 
+\right)^K \prod_{m=1 }^{M} \frac{\prod_{k=1}^{K} \varGamma(n_m^{(k)}+\alpha_k)}{\varGamma(\sum_{k=1}^{K}n_m^{(k)}+\alpha_k)}
+\end{aligned}
+\end{equation}
+
+$n_m^{(k)}$ means number of tokens in m are assigned to topic k.
+
+\noindent Thus, the \textbf{full conditional probability} is:
+
+\begin{equation}
+\begin{aligned} \label{full_cpd}
+& \qquad P(f_i \mid \vec{f}_{-i}, \vec{s}, \vec{v}, \vec{o}, \vec{\alpha}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+
+
+\begin{equation}
+\begin{aligned}
+&= \frac{P(\vec{f}, \vec{s}, \vec{v}, \vec{o} \mid \vec{\alpha}, \vec{\beta})}{P(\vec{f}_{-i}, \vec{s}, \vec{v}, \vec{o} \mid \vec{\alpha}, \vec{\beta})}
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \frac{P(\vec{s}, \vec{v}, \vec{o} \mid  \vec{f}, \vec{\beta}) P(\vec{f} \mid \vec{\alpha}) }{P(\vec{s}_{-i}, \vec{v}_{-i}, \vec{o}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) P(s_i, v_i, o_i \mid \vec{\beta} )  P(\vec{f}_{-i} \mid \vec{\alpha}) }
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&\propto \frac{P(\vec{s} \mid  \vec{f}, \vec{\beta}) P(\vec{v}\mid  \vec{f}, \vec{\beta}) P(\vec{o} \mid  \vec{f}, \vec{\beta})   P(\vec{f} \mid \vec{\alpha}) }{P(\vec{s}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) P(\vec{v}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) P(\vec{o}_{-i} \mid  \vec{f}_{-i}, \vec{\beta})   P(\vec{f}_{-i} \mid \vec{\alpha})}
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&\propto \frac{P(\vec{s} \mid  \vec{f}, \vec{\beta}) }{P(\vec{s}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) } \cdot \frac{P(\vec{v}\mid  \vec{f}, \vec{\beta})}{P(\vec{v}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) } \cdot\frac{P(\vec{o} \mid  \vec{f}, \vec{\beta})}{P(\vec{o}_{-i} \mid  \vec{f}_{-i}, \vec{\beta}) } \cdot \frac{P(\vec{f} \mid \vec{\alpha})}{P(\vec{f}_{-i} \mid \vec{\alpha})}
+\end{aligned}
+\end{equation}
+
+
+
+\begin{equation}
+\begin{aligned}
+& \propto P(\vec{s} \mid  \vec{f}, \vec{\beta}) \cdot P(\vec{v}\mid  \vec{f}, \vec{\beta}) \cdot  P(\vec{o} \mid  \vec{f}, \vec{\beta}) \cdot P(\vec{f} \mid \vec{\alpha})
+\end{aligned}
+\end{equation}
+
+
+Also, Taking $P(\vec{s} \mid  \vec{f}, \vec{\beta})$ as an example:
+
+\begin{equation}
+\begin{aligned}
+& \qquad P(\vec{s} \mid  \vec{f}, \vec{\beta})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&= \left( \frac{\varGamma(\sum_{t=1}^{V_s} \beta_t)}{\prod_{t=1}^{V_s}\varGamma(\beta_t)} \right)^K 
+\prod_{k=1}^{K}
+\frac{\prod_{t=1}^{V_s}\varGamma(\beta_t+n_{s,k}^{(t)})}{\varGamma(\sum_{t=1}^{V_s} (\beta_t+n_{s,k}^{(t)}))} 
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+&\propto \prod_{k=1}^K \frac{\prod_{t=1}^{V_s} \varGamma(n_{s,k}^{(t)} + \beta_t)}{\varGamma(\sum_{t=1}^{V_s} (n_{s,k}^{(t)}+\beta_t))}
+\end{aligned}
+\end{equation}
+
+Remove factor not related to current subject:
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{k=1}^K \frac{\prod_{j\neq t}^{V_s} \varGamma(n_{s,k}^{(j)}+\beta_j) \cdot \varGamma(n_{s,k}^{(t)}+\beta_t)}{\varGamma(\sum_{t=1}^{V_s} (n_{s,k}^{(t)}+\beta_t))}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&\propto \prod_{k=1}^K \frac{ \varGamma(n_{s,k}^{(t)}+\beta_t)}{\varGamma(\sum_{t=1}^{V_s} (n_{s,k}^{(t)}+\beta_t))}
+\end{aligned}
+\end{equation}
+
+Let $n_{s,k,-i}^{(t)}$ represents times of subjects except for the i-th subject that assigned to topic k.
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{k=1}^K \frac{\varGamma(n_{s,k,-i}^{(t)}+\beta_t+1)}{\varGamma(1+\sum_{t=1}^{V_s}(n_{s,k,-i}^{(t)} + \beta_t))}
+\end{aligned}
+\end{equation}
+
+Remove factor not related to current topic:
+
+\begin{equation}
+\begin{aligned}
+&= \prod_{k\neq z}^K \frac{\varGamma(n_{s,k,-i}^{(t)}+\beta_t+1)}{\varGamma(1+\sum_{t=1}^{V_s}(n_{s,k,-i}^{(t)} + \beta_t))}
+\cdot \frac{\varGamma(n_{s,z,-i}^{(t)}+\beta_t+1)}{\varGamma(1+\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t))}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&\propto  \frac{\varGamma(n_{s,z,-i}^{(t)}+\beta_t+1)}{\varGamma(1+\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t))}
+\end{aligned}
+\end{equation}
+
+Use $\varGamma(x+1) = x\varGamma(x)$, we get:
+
+\begin{equation}
+\begin{aligned}
+&= \frac{n_{s,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t)} \frac{\varGamma(n_{s,z,-i}^{(t)}+\beta_t)}{\varGamma(\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t))}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+&\propto \frac{n_{s,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t)}
+\end{aligned}
+\end{equation}
+
+
+So the first part of (\ref{full_cpd}) can be computed:
+
+\begin{equation}
+\begin{aligned}
+&\propto \frac{n_{s,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t)}
+\cdot \frac{n_{v,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_v}(n_{v,z,-i}^{(t)} + \beta_t)}
+\cdot \frac{n_{o,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_o}(n_{o,z,-i}^{(t)} + \beta_t)}
+\end{aligned}
+\end{equation}
+
+
+And the second part of (\ref{full_cpd}) can be computed in the same way:
+
+\begin{equation}
+\begin{aligned}
+& \qquad P(\vec{f} \mid \vec{\alpha})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+& \propto \frac{n_{m,-i}^{(t)}+\alpha_k}{(\sum_{k=1}^K(n_m^{k}+ \alpha_k)) -1}
+\end{aligned}
+\end{equation}
+
+so the full conditional probability distribution of (\ref{full_cpd}) is proportional to:
+
+\begin{equation}
+\begin{aligned} \label{full}
+& \frac{n_{s,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_s}(n_{s,z,-i}^{(t)} + \beta_t)}
+\cdot \frac{n_{v,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_v}(n_{v,z,-i}^{(t)} + \beta_t)}
+\cdot \frac{n_{o,z,-i}^{(t)}+\beta_t}{\sum_{t=1}^{V_o}(n_{o,z,-i}^{(t)} + \beta_t)}
+\cdot \frac{n_{m,-i}^{(t)}+\alpha_k}{(\sum_{k=1}^K(n_m^{k}+ \alpha_k)) -1}
+\end{aligned}
+\end{equation}
+
+\newpage
+
+\textbf{ Multimonial parameters.}
+The state of Markov chain is $S=\{\vec{s}, \vec{v}, \vec{o}, \vec{f}\}$
+
+\begin{equation}
+\begin{aligned}
+& P(\vec{\theta}_m \mid S, \vec{\alpha}) = Dir(\vec{\theta}_m \mid \vec{n}_m + \vec{\alpha})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+& P(\vec{\phi}_k^s \mid S, \vec{\beta}) = Dir(\vec{\phi}_k^s \mid \vec{n}_{s,k} + \vec{\beta})
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+& P(\vec{\phi}_k^v \mid S, \vec{\beta}) = Dir(\vec{\phi}_k^v \mid \vec{n}_{v,k} + \vec{\beta})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+& P(\vec{\phi}_k^o \mid S, \vec{\beta}) = Dir(\vec{\phi}_k^o \mid \vec{n}_{o,k} + \vec{\beta})
+\end{aligned}
+\end{equation}
+
+By using $E(Dir(\vec{\alpha})) = a_i / \Sigma_i a_i$, we get:
+\begin{equation}
+\begin{aligned} \label{phi_s}
+& \phi_{k,t}^s = \frac{n_{s,k}^{(t)} + \beta_t}{\Sigma_{t=1}^{V_s} (n_{s,k}^{(t)} + \beta_t)}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned} \label{phi_v}
+& \phi_{k,t}^v = \frac{n_{v,k}^{(t)} + \beta_t}{\Sigma_{t=1}^{V_v} (n_{v,k}^{(t)} + \beta_t)}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned} \label{phi_o}
+& \phi_{k,t}^o = \frac{n_{o,k}^{(t)} + \beta_t}{\Sigma_{t=1}^{V_o} (n_{o,k}^{(t)} + \beta_t)}
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned} \label{theta}
+& \theta_{m,k} = \frac{n_m^{(k)} + \alpha_k}{\Sigma_{k=1}^K (n_m^{(k)} + \alpha_k)}
+\end{aligned}
+\end{equation}
+
+Using (\ref{phi_s}), (\ref{phi_v}), (\ref{phi_o}), (\ref{theta}) and (\ref{full}), the Gibbs sampling can runs.
+
+\subsection{Pseudocode of Gibbs sampling}
+
+%\begin{theorem}
+%If $X$ is the number of heads in $n$ iid coin tosses %with bias $p$,
+%then
+%\begin{equation}
+%\label{demoivre:eqn}
+%\frac{X-np}{\sqrt{np(1-p)}}
+%\end{equation}
+%converges to the standard normal distribution.
+%\end{theorem}
+%and figures
+
+\section{Ideas for final project}
+
+Ideas
+
+\bibliography{bib} \bibliographystyle{plain}
+\end{document}
