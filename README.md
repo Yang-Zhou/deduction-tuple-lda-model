@@ -1,4 +1,3 @@
-deduction-tuple-lda-model
-=========================
+Tuple LDA模型的推导
+===================
 
-My deduction of the independent tuple lea model
