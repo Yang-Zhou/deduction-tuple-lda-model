@@ -1,8 +1,17 @@
-Tuple LDA模型的推导
+Tuple LDA
 ===================
 
+LDA treats document as a multinomial distribution of topics, and treat a topic as a multinomial 
+distribution of words.
+According to this thoughts, a document is treated as a distribution of events, and an event is 
+treated as a distribution of tuple consisting of objects, predicates and subjects(That's why the model is called Tuple LDA).
+Idea illustrates below:
 
+![Plate representation](https://raw.github.com/Yang-Zhou/deduction-tuple-lda-model/master/TLDA_illustrate.png)
+
+Using plate model from PGM to represent the idea：
 ![Plate representation](https://raw.github.com/Yang-Zhou/deduction-tuple-lda-model/master/graph.png)
+
 
 ### Generating process
 
