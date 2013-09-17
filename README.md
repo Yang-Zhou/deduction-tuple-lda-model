@@ -10,6 +10,7 @@ Idea illustrates below:
 ![Plate representation](https://raw.github.com/Yang-Zhou/deduction-tuple-lda-model/master/TLDA_illustrate.png)
 
 Using plate model from PGM to represent the idea：
+
 ![Plate representation](https://raw.github.com/Yang-Zhou/deduction-tuple-lda-model/master/graph.png)
 
 
